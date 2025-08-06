@@ -18,6 +18,16 @@ public class ProductionService {
     }
 
     @Transactional(readOnly = true)
+    public List<Production> findAll() {
+        return productionRepository.findAll();
+    }
+
+    @Transactional
+    public Production save(Production production) {
+        return productionRepository.save(production);
+    }
+
+    @Transactional(readOnly = true)
     public Production findById(Long id) {
         return productionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produção não encontrada com o ID: " + id));
@@ -42,7 +52,7 @@ public class ProductionService {
     public Production atualizarProducao(Long id, Production productionDetails) {
         Production production = productionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produção não encontrada"));
-        
+
         production.setNome(productionDetails.getNome());
         production.setEspecie(productionDetails.getEspecie());
         production.setDataInicio(productionDetails.getDataInicio());
@@ -50,7 +60,7 @@ public class ProductionService {
         production.setDiasColheita(productionDetails.getDiasColheita());
         production.setQuantidade(productionDetails.getQuantidade());
         production.setUnidadeMedida(productionDetails.getUnidadeMedida());
-        
+
         return productionRepository.save(production);
     }
 
