@@ -15,3 +15,9 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 INSERT INTO users (name, email, password, cpf_cnpj, phone, profile_type) VALUES
 ('João Silva', 'joao@email.com', '$2a$10$7uYFmjw1dCSXXHtJc5G8UOmi2Bq6zTZFoyziUzEr3wrRbPAMX6MVa', '12345678901', '31999999999', 'PF'),
 ('Empresa XPTO', 'contato@xpto.com', '$2a$10$D1zXq0OsEr09h9i0eMiEQOmMxD8p5l74O9CeuXKpxUflQp/JkjphK', '12345678000199', '1133334444', 'PJ');
+
+
+INSERT INTO users (name, email, password, cpf_cnpj, phone, profile_type) VALUES
+('Produtor Exemplo', 'produtor@email.com', '$2a$10$7uYFmjw1dCSXXHtJc5G8UOmi2Bq6zTZFoyziUzEr3wrRbPAMX6MVa', '99988877766', '31987654321', 'PF');
+
+-- Nota: a senha hash acima é para 'senha123'.
