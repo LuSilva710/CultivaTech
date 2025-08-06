@@ -76,44 +76,44 @@ test:auth-backend:
 build:config-server:
   <<: *docker_build_job
   variables:
-    SERVICE_PATH: Config-Server
-    SERVICE_NAME: config-server
+    SERVICE_PATH: "Config-Server"
+    SERVICE_NAME: "config-server"
 
 build:discovery-server:
   <<: *docker_build_job
   variables:
-    SERVICE_PATH: discovery-server
-    SERVICE_NAME: discovery-server
+    SERVICE_PATH: "discovery-server"
+    SERVICE_NAME: "discovery-server"
 
 build:api-gateway:
   <<: *docker_build_job
   variables:
-    SERVICE_PATH: api-gateway
-    SERVICE_NAME: api-gateway
+    SERVICE_PATH: "api-gateway"
+    SERVICE_NAME: "api-gateway"
 
 build:property-service:
   <<: *docker_build_job
   variables:
-    SERVICE_PATH: Property-Service
-    SERVICE_NAME: property-service
+    SERVICE_PATH: "Property-Service"
+    SERVICE_NAME: "property-service"
 
 build:auth-backend:
   <<: *docker_build_job
   variables:
-    SERVICE_PATH: Autentication-Users/Back-End
-    SERVICE_NAME: auth-backend
+    SERVICE_PATH: "Autentication-Users/Back-End"
+    SERVICE_NAME: "auth-backend"
 
 build:auth-frontend:
   <<: *docker_build_job
   variables:
-    SERVICE_PATH: Autentication-Users/Front-End
-    SERVICE_NAME: auth-frontend
+    SERVICE_PATH: "Autentication-Users/Front-End"
+    SERVICE_NAME: "auth-frontend"
 
 build:farm-production: # <--- JOB ADICIONADO/CORRIGIDO
   <<: *docker_build_job
   variables:
-    SERVICE_PATH: farm-production
-    SERVICE_NAME: farm-production
+    SERVICE_PATH: "farm-production"
+    SERVICE_NAME: "farm-production"
 
 # ========= ESTÁGIO DE DEPLOY =========
 
