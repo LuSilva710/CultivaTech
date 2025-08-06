@@ -119,23 +119,23 @@ build:farm-production: # <--- JOB ADICIONADO/CORRIGIDO
 
 deploy:
   stage: deploy
-  image: docker/compose:latest
-  services:
-    - docker:20.10.16-dind
-  # tags: [local-deploy] # As tags foram removidas para usar Shared Runners
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H 192.168.0.102 >> ~/.ssh/known_hosts
   script:
-    - echo "Iniciando deploy na máquina local..."
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - export CI_REGISTRY_LOWER=$(echo "$CI_REGISTRY" | tr '[:upper:]' '[:lower:]')
-    - export CI_PROJECT_PATH_LOWER=$(echo "$CI_PROJECT_PATH" | tr '[:upper:]' '[:lower:]')
-    - export DB_PASSWORD=$DB_PASSWORD
-    - export JWT_SECRET=$JWT_SECRET
-
-    - docker-compose -f docker-compose.prod.yml pull
-    - docker-compose -f docker-compose.prod.yml up -d --remove-orphans
-    - docker image prune -f
+    - echo "Iniciando deploy via SSH na máquina local..."
+    - |
+      ssh devsshuser@192.168.0.102 << 'EOF'
+        cd c/Users/55319/cultivatech/
+        git pull origin LuSilva-dev
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        docker-compose -f docker-compose.prod.yml pull
+        docker-compose -f docker-compose.prod.yml up -d --remove-orphans
+        docker image prune -f
+      EOF
   rules:
     - if: '$CI_COMMIT_BRANCH == "LuSilva-dev"'
-
-
-# Teste temporário de trigger no CI/CD
