@@ -35,8 +35,8 @@ stages:
     - echo "Iniciando login no GitLab Container Registry..."
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - echo "Iniciando login no Docker Hub..."
-    # LINHA CORRIGIDA: sintaxe correta para passar a senha via stdin
-    - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+    # LINHA CORRIGIDA: Usa uma sintaxe de pipe mais segura
+    - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
 
   script:
     - cd $SERVICE_PATH
