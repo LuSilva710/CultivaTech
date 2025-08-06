@@ -35,9 +35,8 @@ stages:
     - echo "Iniciando login no GitLab Container Registry..."
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - echo "Iniciando login no Docker Hub..."
-    # LINHA CORRIGIDA: Usa o pipe e o argumento --password-stdin
-    - echo "$DOCKERHUB_PASSWORD" |  docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-
+    # LINHA CORRIGIDA: sintaxe correta para passar a senha via stdin
+    - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
 
   script:
     - cd $SERVICE_PATH
@@ -50,16 +49,12 @@ stages:
     - docker push $IMAGE_PATH:$CI_COMMIT_SHORT_SHA
     - docker push $IMAGE_PATH:latest
     
-    # 3. Adiciona login e push para o Docker Hub
-    - echo "Iniciando login no Docker Hub..."
-    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-
-    # 4. Constrói a imagem para o Docker Hub (com o seu username)
-    - DOCKERHUB_IMAGE_PATH="<lusilva97>/$SERVICE_NAME"
+    # 3. Constrói a imagem para o Docker Hub (com o seu username)
+    - DOCKERHUB_IMAGE_PATH="lusilva97/$SERVICE_NAME"
     - docker tag $IMAGE_PATH:$CI_COMMIT_SHORT_SHA $DOCKERHUB_IMAGE_PATH:$CI_COMMIT_SHORT_SHA
     - docker tag $IMAGE_PATH:latest $DOCKERHUB_IMAGE_PATH:latest
 
-    # 5. Faz o push para o Docker Hub
+    # 4. Faz o push para o Docker Hub
     - docker push $DOCKERHUB_IMAGE_PATH:$CI_COMMIT_SHORT_SHA
     - docker push $DOCKERHUB_IMAGE_PATH:latest
   
@@ -71,27 +66,27 @@ stages:
 test:config-server:
   <<: *java_test_job
   variables:
-    SERVICE_PATH: Config-Server
+    SERVICE_PATH: "Config-Server"
 
 test:discovery-server:
   <<: *java_test_job
   variables:
-    SERVICE_PATH: discovery-server
+    SERVICE_PATH: "discovery-server"
 
 test:api-gateway:
   <<: *java_test_job
   variables:
-    SERVICE_PATH: api-gateway
+    SERVICE_PATH: "api-gateway"
 
 test:property-service:
   <<: *java_test_job
   variables:
-    SERVICE_PATH: Property-Service
+    SERVICE_PATH: "Property-Service"
 
 test:auth-backend:
   <<: *node_test_job
   variables:
-    SERVICE_PATH: Autentication-Users/Back-End
+    SERVICE_PATH: "Autentication-Users/Back-End"
 
 
 # ========= ESTÁGIO DE BUILD =========
@@ -155,7 +150,8 @@ deploy:
       ssh devsshuser@192.168.0.102 << 'EOF'
         cd c/Users/55319/cultivatech/
         git pull origin LuSilva-dev
-        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        # LINHA CORRIGIDA: login no Docker Hub via SSH
+        echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
         docker-compose -f docker-compose.prod.yml pull
         docker-compose -f docker-compose.prod.yml up -d --remove-orphans
         docker image prune -f
