@@ -46,18 +46,30 @@ stages:
 # ========= JOBS DE TESTE =========
 
 test:config-server:
-  { <<: *java_test_job, variables: { SERVICE_PATH: Config-Server } }
+  <<: *java_test_job
+  variables:
+    SERVICE_PATH: Config-Server
+
 test:discovery-server:
-  { <<: *java_test_job, variables: { SERVICE_PATH: discovery-server } }
+  <<: *java_test_job
+  variables:
+    SERVICE_PATH: discovery-server
+
 test:api-gateway:
-  { <<: *java_test_job, variables: { SERVICE_PATH: api-gateway } }
+  <<: *java_test_job
+  variables:
+    SERVICE_PATH: api-gateway
+
 test:property-service:
-  { <<: *java_test_job, variables: { SERVICE_PATH: Property-Service } }
+  <<: *java_test_job
+  variables:
+    SERVICE_PATH: Property-Service
+
 test:auth-backend:
-  {
-    <<: *node_test_job,
-    variables: { SERVICE_PATH: Autentication-Users/Back-End },
-  }
+  <<: *node_test_job
+  variables:
+    SERVICE_PATH: Autentication-Users/Back-End
+
 
 # ========= ESTÁGIO DE BUILD =========
 
