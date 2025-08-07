@@ -1,6 +1,7 @@
 // src/pages/Register/Register.jsx
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Adicione esta linha
 import {
   Container,
   Form,
@@ -18,11 +19,12 @@ const Register = () => {
     password: '',
     cpfCnpj: '',
     phone: '',
-    profileType: 'PF' // PF (Pessoa Física) ou PJ (Pessoa Jurídica)
+    profileType: 'PF'
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate(); // Adicione esta linha
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,8 +99,8 @@ const Register = () => {
       });
 
       console.log('Registro bem-sucedido:', response.data);
+      navigate('/login'); // Adicione esta linha
       
-      // Redirecionar para o login ou dashboard
     } catch (error) {
       console.error("Erro no registro:", error);
 

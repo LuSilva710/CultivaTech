@@ -11,7 +11,7 @@ export default defineConfig({
       '/api': {
         target: 'http://api-gateway:8080',  // Nome do serviço gateway
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        // rewrite: (path) => path.replace(/^\/api/, ''),
       }
     },
     hmr: {

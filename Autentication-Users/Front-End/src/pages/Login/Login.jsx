@@ -13,14 +13,15 @@ const Login = () => {
     try {
       const response = await axios.post('/api/auth/login', { email, password });
       console.log(response.data);
-      navigate('/dashboard'); // Redireciona para o dashboard após o login
+      // Alterado o redirecionamento para a página de cadastro de propriedade
+      navigate('/cadastro-propriedade'); // Altere esta linha
     } catch (error) {
       console.error('Erro ao fazer login:', error);
     }
   };
 
   const handleRegisterClick = () => {
-    navigate('/register'); // Redireciona para a tela de Cadastro
+    navigate('/register');
   };
 
   return (
