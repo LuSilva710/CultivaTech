@@ -81,7 +81,7 @@ jobs:
       # Não é mais necessário usar uma action de SSH, pois o runner está na máquina
       # Você pode executar os comandos diretamente.
       run: |
-        cd /c/Users/55319/cultivatech/
+        cd 'C:\Users\55319\cultivatech'
         git pull origin LuSilva-dev
         
         # Login usando as variáveis do ambiente do runner
