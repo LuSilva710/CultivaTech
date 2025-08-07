@@ -83,10 +83,15 @@ jobs:
           host: 192.168.0.102
           username: devsshuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: DOCKERHUB_USERNAME,DOCKERHUB_PASSWORD
           script: |
-            cd c/Users/55319/cultivatech/
+            cd /c/Users/55319/cultivatech/  # Use o caminho de estilo Linux
             git pull origin LuSilva-dev
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            
+            # Login usando as variáveis do ambiente SSH
+            docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "$DOCKERHUB_PASSWORD"
+            
+            # Agora o pull e o up funcionarão
             docker-compose -f docker-compose.prod.yml pull
             docker-compose -f docker-compose.prod.yml up -d --remove-orphans
             docker image prune -f
