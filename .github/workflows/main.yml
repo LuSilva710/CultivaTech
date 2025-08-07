@@ -80,12 +80,12 @@ jobs:
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 192.168.0.102
+          host: 152.255.103.227
           username: devsshuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: DOCKERHUB_USERNAME,DOCKERHUB_PASSWORD
           script: |
-            cd /c/Users/55319/cultivatech/  # Use o caminho de estilo Linux
+            cd /c/Users/55319/cultivatech/ 
             git pull origin LuSilva-dev
             
             # Login usando as variáveis do ambiente SSH
