@@ -36,7 +36,7 @@ stages:
   - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
   - echo "Iniciando login no Docker Hub..."
     # LINHA CORRIGIDA: Usa printf para uma passagem de senha mais robusta
-  - printf "%s" "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+  - docker login -u "$DOCKERHUB_USERNAME" --password-stdin < <(printf "%s" "$DOCKERHUB_PASSWORD")
 
   script:
     - cd $SERVICE_PATH
