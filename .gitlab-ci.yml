@@ -36,7 +36,7 @@ stages:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - echo "Iniciando login no Docker Hub..."
     # LINHA CORRIGIDA
-    - docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_PASSWORD"
+    - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
 
   script:
     - cd $SERVICE_PATH
@@ -150,7 +150,7 @@ deploy:
       ssh devsshuser@192.168.0.102 << 'EOF'
         cd c/Users/55319/cultivatech/
         git pull origin LuSilva-dev
-        docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_PASSWORD"
+        echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
         docker-compose -f docker-compose.prod.yml pull
         docker-compose -f docker-compose.prod.yml up -d --remove-orphans
         docker image prune -f
