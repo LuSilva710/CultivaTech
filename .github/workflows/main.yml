@@ -72,26 +72,22 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/property-service:${{ github.sha }}, ${{ secrets.DOCKERHUB_USERNAME }}/property-service:latest
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build_and_push
     environment: Production
     
     steps:
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 152.255.103.227
-          username: devsshuser
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: DOCKERHUB_USERNAME,DOCKERHUB_PASSWORD
-          script: |
-            cd /c/Users/55319/cultivatech/ 
-            git pull origin LuSilva-dev
-            
-            # Login usando as variáveis do ambiente SSH
-            docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "$DOCKERHUB_PASSWORD"
-            
-            # Agora o pull e o up funcionarão
-            docker-compose -f docker-compose.prod.yml pull
-            docker-compose -f docker-compose.prod.yml up -d --remove-orphans
-            docker image prune -f
+    - name: Deploy on Self-Hosted Runner
+      # Não é mais necessário usar uma action de SSH, pois o runner está na máquina
+      # Você pode executar os comandos diretamente.
+      run: |
+        cd /c/Users/55319/cultivatech/
+        git pull origin LuSilva-dev
+        
+        # Login usando as variáveis do ambiente do runner
+        docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "$DOCKERHUB_PASSWORD"
+        
+        # Agora o pull e o up funcionarão
+        docker-compose -f docker-compose.prod.yml pull
+        docker-compose -f docker-compose.prod.yml up -d --remove-orphans
+        docker image prune -f
