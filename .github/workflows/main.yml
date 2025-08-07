@@ -84,8 +84,8 @@ jobs:
         cd 'C:\Users\55319\cultivatech'
         git pull origin LuSilva-dev
         
-        # Login usando as variáveis do ambiente do runner
-        printf "%s" "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+        echo -NoNewline "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+        
         
         # Agora o pull e o up funcionarão
         docker-compose -f docker-compose.prod.yml pull
