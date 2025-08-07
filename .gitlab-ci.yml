@@ -32,11 +32,11 @@ stages:
   services:
     - docker:20.10.16-dind
   before_script:
-  - echo "Iniciando login no GitLab Container Registry..."
-  - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
-  - echo "Iniciando login no Docker Hub..."
-    # LINHA CORRIGIDA: Usa printf para uma passagem de senha mais robusta
-  - docker login -u "$DOCKERHUB_USERNAME" --password-stdin < <(printf "%s" "$DOCKERHUB_PASSWORD")
+    - echo "Iniciando login no GitLab Container Registry..."
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - echo "Iniciando login no Docker Hub..."
+    # LINHA CORRIGIDA
+    - docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_PASSWORD"
 
   script:
     - cd $SERVICE_PATH
@@ -150,8 +150,7 @@ deploy:
       ssh devsshuser@192.168.0.102 << 'EOF'
         cd c/Users/55319/cultivatech/
         git pull origin LuSilva-dev
-        # LINHA CORRIGIDA: login no Docker Hub via SSH com printf
-        printf "%s" "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+        docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_PASSWORD"
         docker-compose -f docker-compose.prod.yml pull
         docker-compose -f docker-compose.prod.yml up -d --remove-orphans
         docker image prune -f
