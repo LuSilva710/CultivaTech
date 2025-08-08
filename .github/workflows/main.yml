@@ -44,7 +44,7 @@ jobs:
       - name: Run backend tests (discovery-server)
         run: mvn -B test -Dspring.profiles.active=test --file discovery-server/pom.xml
         
-      # CORREÇÃO: Desativada a inicialização de scripts SQL para o perfil de teste.
+      # CORREÇÃO: Desativado o Flyway explicitamente para o perfil de teste.
       - name: Run backend tests (farm-production)
         run: >
           mvn -B test 
@@ -55,9 +55,10 @@ jobs:
           -Dspring.datasource.driver-class-name=org.h2.Driver 
           -Dspring.jpa.hibernate.ddl-auto=create-drop
           -Dspring.sql.init.mode=never
+          -Dspring.flyway.enabled=false
           --file farm-production/pom.xml
         
-      # CORREÇÃO: Desativada a inicialização de scripts SQL para o perfil de teste.
+      # CORREÇÃO: Desativado o Flyway explicitamente para o perfil de teste.
       - name: Run backend tests (property-service)
         run: >
           mvn -B test 
@@ -68,6 +69,7 @@ jobs:
           -Dspring.datasource.driver-class-name=org.h2.Driver 
           -Dspring.jpa.hibernate.ddl-auto=create-drop
           -Dspring.sql.init.mode=never
+          -Dspring.flyway.enabled=false
           --file Property-Service/pom.xml
 
       # 5. Instala as dependências e roda os testes dos serviços Node.js
