@@ -44,13 +44,11 @@ jobs:
       - name: Run backend tests (discovery-server)
         run: mvn -B test -Dspring.profiles.active=test --file discovery-server/pom.xml
         
-      # CORREÇÃO: Desativado o Flyway explicitamente para o perfil de teste.
+      # CORREÇÃO: Removido os parâmetros de desativação do Eureka para permitir que o contexto web seja carregado corretamente.
       - name: Run backend tests (farm-production)
         run: >
           mvn -B test 
           -Dspring.profiles.active=test 
-          -Dspring.cloud.discovery.enabled=false 
-          -Deureka.client.enabled=false 
           -Dspring.datasource.url=jdbc:h2:mem:testdb 
           -Dspring.datasource.driver-class-name=org.h2.Driver 
           -Dspring.jpa.hibernate.ddl-auto=create-drop
@@ -58,13 +56,11 @@ jobs:
           -Dspring.flyway.enabled=false
           --file farm-production/pom.xml
         
-      # CORREÇÃO: Desativado o Flyway explicitamente para o perfil de teste.
+      # CORREÇÃO: Removido os parâmetros de desativação do Eureka para permitir que o contexto web seja carregado corretamente.
       - name: Run backend tests (property-service)
         run: >
           mvn -B test 
           -Dspring.profiles.active=test 
-          -Dspring.cloud.discovery.enabled=false 
-          -Deureka.client.enabled=false 
           -Dspring.datasource.url=jdbc:h2:mem:testdb 
           -Dspring.datasource.driver-class-name=org.h2.Driver 
           -Dspring.jpa.hibernate.ddl-auto=create-drop
