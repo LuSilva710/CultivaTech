@@ -38,8 +38,9 @@ jobs:
       - name: Run backend tests (api-gateway)
         run: mvn -B test -Dspring.profiles.active=test --file api-gateway/pom.xml
         
+      # CORREÇÃO: Ativado o perfil "native" para que o teste do Config Server não precise de um repositório Git.
       - name: Run backend tests (config-server)
-        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Config-Server/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test,native --file Config-Server/pom.xml
 
       - name: Run backend tests (discovery-server)
         run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file discovery-server/pom.xml
@@ -51,7 +52,6 @@ jobs:
         run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Property-Service/pom.xml
 
       # 5. Instala as dependências e roda os testes dos serviços Node.js
-      # CORREÇÃO: Adicionado passo de teste para o auth-backend (Node.js)
       - name: Install auth-backend dependencies and run tests
         run: |
           cd authentication-users/Back-End
