@@ -30,28 +30,28 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # CORREÇÃO: Usando um padrão curinga para encontrar o package-lock.json de forma mais robusta.
+          # Usando um padrão curinga para encontrar o package-lock.json de forma mais robusta.
           cache-dependency-path: '**/package-lock.json'
 
       # 4. Roda os testes para cada serviço de back-end
-      # Adicionado -Dspring.cloud.discovery.enabled=false e -Deureka.client.enabled=false para rodar os testes sem depender do Eureka.
+      # CORREÇÃO: Adicionado -Dspring.profiles.active=test para garantir que o perfil de teste do Spring seja usado.
       - name: Run backend tests (api-gateway)
-        run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file api-gateway/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file api-gateway/pom.xml
 
       - name: Run backend tests (auth-backend)
-        run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Authentication-Users/Back-End/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Authentication-Users/Back-End/pom.xml
         
       - name: Run backend tests (config-server)
-        run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Config-Server/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Config-Server/pom.xml
 
       - name: Run backend tests (discovery-server)
-        run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file discovery-server/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file discovery-server/pom.xml
         
       - name: Run backend tests (farm-production)
-        run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file farm-production/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file farm-production/pom.xml
         
       - name: Run backend tests (property-service)
-        run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Property-Service/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Property-Service/pom.xml
 
       # 5. Instala as dependências e roda os testes do front-end
       - name: Install frontend dependencies and run tests
