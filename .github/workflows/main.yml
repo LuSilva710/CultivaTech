@@ -44,7 +44,7 @@ jobs:
       - name: Run backend tests (discovery-server)
         run: mvn -B test -Dspring.profiles.active=test --file discovery-server/pom.xml
         
-      # CORREÇÃO: Adicionado o driver-class-name do H2 para garantir a conexão correta nos testes.
+      # CORREÇÃO: Desativada a inicialização de scripts SQL para o perfil de teste.
       - name: Run backend tests (farm-production)
         run: >
           mvn -B test 
@@ -53,10 +53,11 @@ jobs:
           -Deureka.client.enabled=false 
           -Dspring.datasource.url=jdbc:h2:mem:testdb 
           -Dspring.datasource.driver-class-name=org.h2.Driver 
-          -Dspring.jpa.hibernate.ddl-auto=create-drop 
+          -Dspring.jpa.hibernate.ddl-auto=create-drop
+          -Dspring.sql.init.mode=never
           --file farm-production/pom.xml
         
-      # CORREÇÃO: Adicionado o driver-class-name do H2 para garantir a conexão correta nos testes.
+      # CORREÇÃO: Desativada a inicialização de scripts SQL para o perfil de teste.
       - name: Run backend tests (property-service)
         run: >
           mvn -B test 
@@ -65,7 +66,8 @@ jobs:
           -Deureka.client.enabled=false 
           -Dspring.datasource.url=jdbc:h2:mem:testdb 
           -Dspring.datasource.driver-class-name=org.h2.Driver 
-          -Dspring.jpa.hibernate.ddl-auto=create-drop 
+          -Dspring.jpa.hibernate.ddl-auto=create-drop
+          -Dspring.sql.init.mode=never
           --file Property-Service/pom.xml
 
       # 5. Instala as dependências e roda os testes dos serviços Node.js
