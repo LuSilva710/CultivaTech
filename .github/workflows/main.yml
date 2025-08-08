@@ -1,13 +1,74 @@
+# Nome do workflow
 name: CultivaTech CI/CD
 
+# Gatilho (trigger) que inicia o workflow
 on:
   push:
     branches:
-      - LuSilva-dev
+      - LuSilva-dev # Roda sempre que houver um push na branch LuSilva-dev
 
 jobs:
+  # --- NOVO JOB: TESTES ---
+  # Este job roda primeiro para validar o código com testes automatizados.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Faz o checkout do código do seu repositório
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Java (JDK) para os testes de back-end
+      # Ajuste a versão do Java ('17') se necessário
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # 3. Configura o ambiente Node.js para os testes de front-end
+      # Ajuste a versão do Node ('20') e o gerenciador de pacotes ('npm') se necessário
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          # O caminho para o package-lock.json para o cache funcionar corretamente
+          cache-dependency-path: 'Autentication-Users/Front-End/package-lock.json'
+
+      # 4. Roda os testes para cada serviço de back-end
+      # OBS: Assumindo que você usa Maven. Se for Gradle, troque "mvn -B test" por "./gradlew test"
+      - name: Run backend tests (api-gateway)
+        run: mvn -B test --file api-gateway/pom.xml
+
+      - name: Run backend tests (auth-backend)
+        run: mvn -B test --file Autentication-Users/Back-End/pom.xml
+        
+      - name: Run backend tests (config-server)
+        run: mvn -B test --file Config-Server/pom.xml
+
+      - name: Run backend tests (discovery-server)
+        run: mvn -B test --file discovery-server/pom.xml
+        
+      - name: Run backend tests (farm-production)
+        run: mvn -B test --file farm-production/pom.xml
+        
+      - name: Run backend tests (property-service)
+        run: mvn -B test --file Property-Service/pom.xml
+
+      # 5. Instala as dependências e roda os testes do front-end
+      # OBS: Assumindo que você usa NPM. Se for Yarn, troque para "yarn install" e "yarn test"
+      - name: Install frontend dependencies and run tests
+        run: |
+          cd Autentication-Users/Front-End
+          npm install
+          npm test
+
+  # --- JOB: BUILD E PUSH ---
+  # Este job agora depende do sucesso do job 'test'
   build_and_push:
     runs-on: ubuntu-latest
+    needs: test # Garante que este job só rode se o job 'test' passar
     
     steps:
       - name: Checkout code
@@ -71,23 +132,23 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/property-service:${{ github.sha }}, ${{ secrets.DOCKERHUB_USERNAME }}/property-service:latest
 
+  # --- JOB: DEPLOY ---
+  # Este job não muda, mas agora só será executado se os testes e o build passarem.
   deploy:
     runs-on: self-hosted
     needs: build_and_push
     environment: Production
     
     steps:
-    - name: Deploy on Self-Hosted Runner
-      # Não é mais necessário usar uma action de SSH, pois o runner está na máquina
-      # Você pode executar os comandos diretamente.
-      run: |
-        cd 'C:\Users\55319\cultivatech'
-        git pull origin LuSilva-dev
-        
-        echo -NoNewline "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-        
-        
-        # Agora o pull e o up funcionarão
-        docker-compose -f docker-compose.prod.yml pull
-        docker-compose -f docker-compose.prod.yml up -d --remove-orphans
-        docker image prune -f
+      - name: Deploy on Self-Hosted Runner
+        run: |
+          cd 'C:\Users\55319\cultivatech'
+          git pull origin LuSilva-dev
+          
+          # Realiza o login no Docker Hub usando as credenciais do environment
+          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          
+          # Puxa as imagens mais recentes e sobe os containers
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml up -d --remove-orphans
+          docker image prune -f
