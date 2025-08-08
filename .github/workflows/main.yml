@@ -1,3 +1,4 @@
+# Nome do workflow
 name: CultivaTech CI/CD
 
 # Gatilho (trigger) que inicia o workflow
@@ -16,11 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # --- PASSO DE DEBUG APRIMORADO ---
-      # CORREÇÃO: Este passo agora encontra e lista o caminho exato de todos os arquivos pom.xml
-      - name: List pom.xml files to debug paths
-        run: find . -name "pom.xml"
-
       # 2. Configura o ambiente Java (JDK) para os testes de back-end
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -29,22 +25,18 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Configura o ambiente Node.js para os testes de front-end
+      # 3. Configura o ambiente Node.js para os testes de front-end e auth-backend
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          # Usando um padrão curinga para encontrar o package-lock.json de forma mais robusta.
+          # Usando um padrão curinga para encontrar os arquivos de lock de forma mais robusta.
           cache-dependency-path: '**/package-lock.json'
 
-      # 4. Roda os testes para cada serviço de back-end
-      # CORREÇÃO: Alterado "Authentication-Users" para "authentication-users" (minúsculas)
+      # 4. Roda os testes para os serviços de back-end (Java)
       - name: Run backend tests (api-gateway)
         run: mvn -B test -Dspring.profiles.active=test --file api-gateway/pom.xml
-
-      - name: Run backend tests (auth-backend)
-        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file authentication-users/Back-End/pom.xml
         
       - name: Run backend tests (config-server)
         run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Config-Server/pom.xml
@@ -58,9 +50,15 @@ jobs:
       - name: Run backend tests (property-service)
         run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Property-Service/pom.xml
 
-      # 5. Instala as dependências e roda os testes do front-end
-      # CORREÇÃO: Alterado "Authentication-Users" para "authentication-users" (minúsculas)
-      - name: Install frontend dependencies and run tests
+      # 5. Instala as dependências e roda os testes dos serviços Node.js
+      # CORREÇÃO: Adicionado passo de teste para o auth-backend (Node.js)
+      - name: Install auth-backend dependencies and run tests
+        run: |
+          cd authentication-users/Back-End
+          npm install
+          npm test
+
+      - name: Install auth-frontend dependencies and run tests
         run: |
           cd authentication-users/Front-End
           npm install
@@ -92,7 +90,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:${{ github.sha }}, ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:latest
 
-      # CORREÇÃO: Alterado "Authentication-Users" para "authentication-users" (minúsculas)
       - name: Build and push auth-backend
         uses: docker/build-push-action@v5
         with:
@@ -100,7 +97,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/auth-backend:${{ github.sha }}, ${{ secrets.DOCKERHUB_USERNAME }}/auth-backend:latest
       
-      # CORREÇÃO: Alterado "Authentication-Users" para "authentication-users" (minúsculas)
       - name: Build and push auth-frontend
         uses: docker/build-push-action@v5
         with:
