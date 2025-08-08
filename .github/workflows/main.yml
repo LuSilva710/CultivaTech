@@ -8,14 +8,19 @@ on:
       - LuSilva-dev # Roda sempre que houver um push na branch LuSilva-dev
 
 jobs:
-  # --- JOB: TESTES ---
-  # Este job roda primeiro para validar o código com testes automatizados.
+  # --- JOB: TESTES ---para validar o código com testes automatizados.
   test:
+  # Este job roda primeiro 
     runs-on: ubuntu-latest
     steps:
       # 1. Faz o checkout do código do seu repositório
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # --- NOVO PASSO DE DEBUG ---
+      # Este passo lista todos os arquivos para que possamos verificar os caminhos corretos.
+      - name: List files to debug paths
+        run: ls -R
 
       # 2. Configura o ambiente Java (JDK) para os testes de back-end
       - name: Set up JDK 17
@@ -35,7 +40,6 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       # 4. Roda os testes para cada serviço de back-end
-      # CORREÇÃO: Removido os sinalizadores de desativação do Eureka APENAS para o api-gateway, pois seus testes de integração têm uma configuração específica.
       - name: Run backend tests (api-gateway)
         run: mvn -B test -Dspring.profiles.active=test --file api-gateway/pom.xml
 
