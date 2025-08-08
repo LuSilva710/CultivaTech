@@ -44,16 +44,13 @@ jobs:
       - name: Run backend tests (discovery-server)
         run: mvn -B test -Dspring.profiles.active=test --file discovery-server/pom.xml
         
-      # CORREÇÃO: Desativado a autoconfiguração de DataSource e JPA para os testes do farm-production.
+      # CORREÇÃO: Configurado um banco de dados em memória H2 para os testes.
       - name: Run backend tests (farm-production)
-        run: >
-          mvn -B test 
-          -Dspring.profiles.active=test 
-          -Dspring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-          --file farm-production/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false -Dspring.datasource.url=jdbc:h2:mem:testdb -Dspring.jpa.hibernate.ddl-auto=create-drop --file farm-production/pom.xml
         
+      # CORREÇÃO: Configurado um banco de dados em memória H2 para os testes preventivamente.
       - name: Run backend tests (property-service)
-        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Property-Service/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false -Dspring.datasource.url=jdbc:h2:mem:testdb -Dspring.jpa.hibernate.ddl-auto=create-drop --file Property-Service/pom.xml
 
       # 5. Instala as dependências e roda os testes dos serviços Node.js
       - name: Install auth-backend dependencies and run tests
