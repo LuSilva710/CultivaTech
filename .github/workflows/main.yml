@@ -30,12 +30,11 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # CORREÇÃO: Caminho corrigido para o cache do npm
-          cache-dependency-path: 'Authentication-Users/Front-End/package-lock.json'
+          # CORREÇÃO: Usando um padrão curinga para encontrar o package-lock.json de forma mais robusta.
+          cache-dependency-path: '**/package-lock.json'
 
       # 4. Roda os testes para cada serviço de back-end
-      # CORREÇÃO: Adicionado -Dspring.cloud.discovery.enabled=false e -Deureka.client.enabled=false para rodar os testes sem depender do Eureka.
-      # CORREÇÃO: Corrigido o caminho do pom.xml.
+      # Adicionado -Dspring.cloud.discovery.enabled=false e -Deureka.client.enabled=false para rodar os testes sem depender do Eureka.
       - name: Run backend tests (api-gateway)
         run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file api-gateway/pom.xml
 
@@ -55,7 +54,6 @@ jobs:
         run: mvn -B test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Property-Service/pom.xml
 
       # 5. Instala as dependências e roda os testes do front-end
-      # CORREÇÃO: Corrigido o caminho para o diretório do front-end
       - name: Install frontend dependencies and run tests
         run: |
           cd Authentication-Users/Front-End
@@ -88,7 +86,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:${{ github.sha }}, ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:latest
 
-      # CORREÇÃO: Corrigido o caminho do contexto
       - name: Build and push auth-backend
         uses: docker/build-push-action@v5
         with:
@@ -96,7 +93,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/auth-backend:${{ github.sha }}, ${{ secrets.DOCKERHUB_USERNAME }}/auth-backend:latest
       
-      # CORREÇÃO: Corrigido o caminho do contexto
       - name: Build and push auth-frontend
         uses: docker/build-push-action@v5
         with:
