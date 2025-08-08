@@ -1,4 +1,3 @@
-# Nome do workflow
 name: CultivaTech CI/CD
 
 # Gatilho (trigger) que inicia o workflow
@@ -41,12 +40,12 @@ jobs:
       - name: Run backend tests (config-server)
         run: mvn -B test -Dspring.profiles.active=test,native --file Config-Server/pom.xml
 
-      # CORREÇÃO: Removido os sinalizadores de desativação do Eureka, pois o discovery-server precisa de seu próprio contexto para os testes.
       - name: Run backend tests (discovery-server)
         run: mvn -B test -Dspring.profiles.active=test --file discovery-server/pom.xml
         
+      # CORREÇÃO: Desativado o Flyway para os testes do farm-production para evitar a tentativa de conexão com o banco de dados.
       - name: Run backend tests (farm-production)
-        run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file farm-production/pom.xml
+        run: mvn -B test -Dspring.profiles.active=test -Dspring.flyway.enabled=false -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file farm-production/pom.xml
         
       - name: Run backend tests (property-service)
         run: mvn -B test -Dspring.profiles.active=test -Dspring.cloud.discovery.enabled=false -Deureka.client.enabled=false --file Property-Service/pom.xml
